@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)file:///C:/Users/tanma/Downloads/gemini-code-1783430396811.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OR Gate Simulations</title>
+    <style>
+        /* Dark Theme Variables */
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #888;
+            --border-color: #333;
+            
+            /* Industrial Colors */
+            --normal-green: #00e676;
+            --danger-red: #ff1744;
+            
+            /* Logic Colors */
+            --logic-0: #444;
+            --logic-1: #00e5ff;
+            
+            --btn-idle: #2c2c2c;
+            --btn-hover: #3d3d3d;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--text-main);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Panel Containers */
+        .panel {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
+                        inset 0 1px 0 rgba(255,255,255,0.05);
+            margin-bottom: 40px;
+        }
+
+        .panel-title {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: #fff;
+        }
+
+        /* Theory / Logic Simulator Styles */
+        .theory-section {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .logic-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .logic-btn {
+            background-color: var(--btn-idle);
+            color: var(--text-main);
+            border: 2px solid var(--logic-0);
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .logic-btn:hover { background-color: var(--btn-hover); }
+        .logic-btn.active {
+            border-color: var(--logic-1);
+            color: var(--logic-1);
+            background-color: rgba(0, 229, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+        }
+
+        .wire {
+            height: 3px;
+            background-color: var(--logic-0);
+            transition: background-color 0.2s ease;
+            position: relative;
+        }
+        .wire.high { background-color: var(--logic-1); box-shadow: 0 0 5px var(--logic-1); }
+
+        .wire-h { width: 40px; }
+        .wire-v { width: 3px; height: 30px; }
+        
+        .output-label {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--logic-0);
+            background: #111;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            transition: color 0.2s ease;
+        }
+        .output-label.high { color: var(--logic-1); border-color: var(--logic-1); }
+
+        /* SVG Gate Styles */
+        .gate-svg {
+            stroke: var(--text-muted);
+            fill: #1a1a1a;
+            stroke-width: 2.5;
+            transition: stroke 0.2s ease;
+        }
+        .gate-svg.high { stroke: var(--logic-1); }
+        
+        .nand-grid {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nand-input-col { display: flex; flex-direction: column; gap: 40px; }
+        .nand-gate-col { display: flex; flex-direction: column; gap: 20px; }
+
+        /* Industrial Simulator Styles */
+        .inputs-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .sensor-btn {
+            background-color: var(--btn-idle);
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        .sensor-btn:hover { background-color: var(--btn-hover); }
+
+        .sensor-btn.active {
+            background-color: rgba(255, 23, 68, 0.1);
+            border-color: var(--danger-red);
+            color: var(--danger-red);
+            box-shadow: 0 0 15px rgba(255, 23, 68, 0.2);
+        }
+
+        .logic-connection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .indicator-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .indicator-light {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #0a0a0a;
+            border: 6px solid #333;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .indicator-light::before {
+            content: 'NORMAL';
+            color: var(--normal-green);
+            font-weight: bold;
+            font-size: 18px;
+            text-shadow: 0 0 10px var(--normal-green);
+        }
+
+        .indicator-light.alarm-triggered {
+            background-color: var(--danger-red);
+            border-color: #b71c1c;
+            box-shadow: 0 0 40px var(--danger-red), 
+                        inset 0 0 20px rgba(255,255,255,0.4);
+        }
+
+        .indicator-light.alarm-triggered::before {
+            content: 'HALT';
+            color: white;
+            text-shadow: none;
+        }
+
+        .status-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--normal-green);
+            transition: color 0.3s ease;
+        }
+
+        .status-text.alert { color: var(--danger-red); }
+
+        /* SVG Definitions Helper */
+        .sr-only { position: absolute; width: 0; height: 0; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <!-- SVG Definitions for Logic Gates -->
+    <svg class="sr-only">
+        <defs>
+            <!-- Basic OR Gate Path -->
+            <g id="gate-or">
+                <path d="M 0,0 Q 20,25 0,50 Q 50,50 80,25 Q 50,0 0,0 Z"></path>
+            </g>
+            <!-- Basic NAND Gate Path -->
+            <g id="gate-nand">
+                <path d="M 0,0 L 30,0 A 25,25 0 0,1 30,50 L 0,50 Z"></path>
+                <circle cx="60" cy="25" r="5" fill="none" stroke-width="2.5"></circle>
+            </g>
+        </defs>
+    </svg>
+
+    <div class="header">
+        <h1>Understanding the OR Gate</h1>
+        <p>Interactive logic simulators and industrial applications.</p>
+    </div>
+
+    <!-- 1. EDUCATIONAL SIMULATOR PANEL -->
+    <div class="panel">
+        <h2 class="panel-title">Basic Logic Gate Simulator</h2>
+        
+        <div class="theory-section">
+            
+            <!-- Standard OR Gate -->
+            <div>
+                <h3 style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">1. Standard OR Gate</h3>
+                <div class="logic-row">
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <button id="btn-logic-a" class="logic-btn active" onclick="toggleTheory(&#39;A&#39;)">Input A: 1</button>
+                        <button id="btn-logic-b" class="logic-btn active" onclick="toggleTheory(&#39;B&#39;)">Input B: 1</button>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; height: 60px;">
+                        <div id="wire-a" class="wire wire-h high" style="margin-top: 5px;"></div>
+                        <div id="wire-b" class="wire wire-h high" style="margin-bottom: 5px;"></div>
+                    </div>
+
+                    <svg width="80" height="50" viewBox="-5 -5 90 60" id="svg-or" class="gate-svg high">
+                        <use href="#gate-or"></use>
+                    </svg>
+
+                    <div id="wire-y" class="wire wire-h high"></div>
+                    <div id="out-y" class="output-label high">Y = 1</div>
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); width: 80%; margin: 10px auto;">
+
+            <!-- OR Gate built with NAND Gates -->
+            <div>
+                <h3 style="text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">2. OR Gate Equivalent using NAND Gates</h3>
+                <div class="nand-grid">
+                    
+                    <!-- Inputs -->
+                    <div class="nand-input-col">
+                        <div id="lbl-nand-a" class="output-label high" style="font-size: 14px;">A: 1</div>
+                        <div id="lbl-nand-b" class="output-label high" style="font-size: 14px;">B: 1</div>
+                    </div>
+
+                    <!-- Split Wires to NAND 1 and 2 -->
+                    <div class="nand-input-col">
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 35px;">
+                            <div id="wire-na1" class="wire high" style="width: 20px;"></div>
+                            <div id="wire-na2" class="wire high" style="width: 20px;"></div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 35px; margin-top: 25px;">
+                            <div id="wire-nb1" class="wire high" style="width: 20px;"></div>
+                            <div id="wire-nb2" class="wire high" style="width: 20px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- First Stage NANDs (Acting as NOT gates) -->
+                    <div class="nand-gate-col">
+                        <svg width="70" height="40" viewBox="-5 -5 80 60" id="svg-nand-1" class="gate-svg">
+                            <use href="#gate-nand"></use>
+                        </svg>
+                        <svg width="70" height="40" viewBox="-5 -5 80 60" id="svg-nand-2" class="gate-svg">
+                            <use href="#gate-nand"></use>
+                        </svg>
+                    </div>
+
+                    <!-- Wires into final NAND -->
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; height: 90px; padding: 0 10px;">
+                        <div id="wire-mid-a" class="wire " style="width: 30px; margin-top: 15px;"></div>
+                        <div id="wire-mid-b" class="wire " style="width: 30px; margin-bottom: 15px;"></div>
+                    </div>
+
+                    <!-- Final Stage NAND -->
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <svg width="70" height="50" viewBox="-5 -5 80 60" id="svg-nand-3" class="gate-svg high">
+                            <use href="#gate-nand"></use>
+                        </svg>
+                        <div id="wire-nand-out" class="wire wire-h high"></div>
+                        <div id="out-nand-y" class="output-label high">Y = 1</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. INDUSTRIAL SIMULATOR PANEL -->
+    <div class="panel">
+        <h2 class="panel-title">Industrial Safety System Application</h2>
+        <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">
+            In industrial controls, an OR gate acts as a safety trip mechanism. If the Pressure Sensor <strong>OR</strong> the Temperature Sensor detects a fault (Input = 1), the system alarm is triggered to halt operations (Output = 1).
+        </p>
+
+        <div class="inputs-container">
+            <button id="btn-pressure" class="sensor-btn" onclick="toggleSensor(&#39;pressure&#39;)">Pressure Sensor<br>Normal (0)</button>
+            <button id="btn-temp" class="sensor-btn" onclick="toggleSensor(&#39;temp&#39;)">Temp Sensor<br>Normal (0)</button>
+        </div>
+
+        <div class="logic-connection">
+            ↓ OR Gate Logic ↓
+        </div>
+
+        <div class="indicator-wrapper">
+            <div id="main-indicator" class="indicator-light"></div>
+            <div id="status-message" class="status-text">System Operating Normally</div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           PART 1: LOGIC THEORY SIMULATOR SCRIPT
+           ========================================= */
+        let theoryA = false;
+        let theoryB = false;
+
+        function toggleTheory(input) {
+            if (input === 'A') theoryA = !theoryA;
+            if (input === 'B') theoryB = !theoryB;
+            updateTheoryUI();
+        }
+
+        function updateTheoryUI() {
+            // 1. Update Input Buttons & Labels
+            const btnA = document.getElementById('btn-logic-a');
+            const btnB = document.getElementById('btn-logic-b');
+            const lblNandA = document.getElementById('lbl-nand-a');
+            const lblNandB = document.getElementById('lbl-nand-b');
+
+            btnA.innerText = `Input A: ${theoryA ? '1' : '0'}`;
+            btnB.innerText = `Input B: ${theoryB ? '1' : '0'}`;
+            lblNandA.innerText = `A: ${theoryA ? '1' : '0'}`;
+            lblNandB.innerText = `B: ${theoryB ? '1' : '0'}`;
+
+            theoryA ? btnA.classList.add('active') : btnA.classList.remove('active');
+            theoryB ? btnB.classList.add('active') : btnB.classList.remove('active');
+            theoryA ? lblNandA.classList.add('high') : lblNandA.classList.remove('high');
+            theoryB ? lblNandB.classList.add('high') : lblNandB.classList.remove('high');
+
+            // Wire states for inputs
+            document.getElementById('wire-a').className = `wire wire-h ${theoryA ? 'high' : ''}`;
+            document.getElementById('wire-b').className = `wire wire-h ${theoryB ? 'high' : ''}`;
+            document.getElementById('wire-na1').className = `wire ${theoryA ? 'high' : ''}`;
+            document.getElementById('wire-na2').className = `wire ${theoryA ? 'high' : ''}`;
+            document.getElementById('wire-nb1').className = `wire ${theoryB ? 'high' : ''}`;
+            document.getElementById('wire-nb2').className = `wire ${theoryB ? 'high' : ''}`;
+
+            // 2. Logic Calculation
+            const orOutput = theoryA || theoryB;
+            
+            // NAND logic: A NOT = A NAND A.  B NOT = B NAND B.
+            const notA = !(theoryA && theoryA);
+            const notB = !(theoryB && theoryB);
+            const nandOutput = !(notA && notB); // (NOT A) NAND (NOT B) == A OR B
+
+            // 3. Update OR Gate UI
+            document.getElementById('svg-or').classList.toggle('high', orOutput);
+            document.getElementById('wire-y').className = `wire wire-h ${orOutput ? 'high' : ''}`;
+            const outY = document.getElementById('out-y');
+            outY.innerText = `Y = ${orOutput ? '1' : '0'}`;
+            orOutput ? outY.classList.add('high') : outY.classList.remove('high');
+
+            // 4. Update NAND Gate UI
+            document.getElementById('svg-nand-1').classList.toggle('high', notA);
+            document.getElementById('svg-nand-2').classList.toggle('high', notB);
+            
+            document.getElementById('wire-mid-a').className = `wire ${notA ? 'high' : ''}`;
+            document.getElementById('wire-mid-b').className = `wire ${notB ? 'high' : ''}`;
+            
+            document.getElementById('svg-nand-3').classList.toggle('high', nandOutput);
+            document.getElementById('wire-nand-out').className = `wire wire-h ${nandOutput ? 'high' : ''}`;
+            const outNandY = document.getElementById('out-nand-y');
+            outNandY.innerText = `Y = ${nandOutput ? '1' : '0'}`;
+            nandOutput ? outNandY.classList.add('high') : outNandY.classList.remove('high');
+        }
+
+        /* =========================================
+           PART 2: INDUSTRIAL SIMULATOR SCRIPT
+           ========================================= */
+        let pressureFault = false;
+        let tempFault = false;
+
+        function toggleSensor(sensorType) {
+            const pressureBtn = document.getElementById('btn-pressure');
+            const tempBtn = document.getElementById('btn-temp');
+
+            if (sensorType === 'pressure') {
+                pressureFault = !pressureFault;
+                if (pressureFault) {
+                    pressureBtn.classList.add('active');
+                    pressureBtn.innerHTML = 'Pressure Sensor<br>FAULT (1)';
+                } else {
+                    pressureBtn.classList.remove('active');
+                    pressureBtn.innerHTML = 'Pressure Sensor<br>Normal (0)';
+                }
+            } else if (sensorType === 'temp') {
+                tempFault = !tempFault;
+                if (tempFault) {
+                    tempBtn.classList.add('active');
+                    tempBtn.innerHTML = 'Temp Sensor<br>FAULT (1)';
+                } else {
+                    tempBtn.classList.remove('active');
+                    tempBtn.innerHTML = 'Temp Sensor<br>Normal (0)';
+                }
+            }
+
+            evaluateIndustrialLogic();
+        }
+
+        function evaluateIndustrialLogic() {
+            // OR Gate Logic for Industrial Halt
+            const systemHalt = pressureFault || tempFault;
+
+            const indicator = document.getElementById('main-indicator');
+            const statusMsg = document.getElementById('status-message');
+
+            if (systemHalt) {
+                indicator.classList.add('alarm-triggered');
+                statusMsg.classList.add('alert');
+                statusMsg.innerText = "ALARM ACTIVE: System Halted!";
+            } else {
+                indicator.classList.remove('alarm-triggered');
+                statusMsg.classList.remove('alert');
+                statusMsg.innerText = "System Operating Normally";
+            }
+        }
+    </script>
+
+</body></html>
