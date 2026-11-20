@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1a2329">
+  <title>Continuity — Studio Console</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="deco-grid"></div><div class="deco-corner corner-a"></div><div class="deco-corner corner-b"></div>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row"><div class="brand-monogram"><i>C</i></div><div><strong>CONTINUITY</strong><small>STUDIO CONSOLE</small></div><button class="close-sidebar" id="closeSidebar" aria-label="Close navigation">×</button></div>
+      <div class="production-switcher"><p class="micro-label">CURRENT PRODUCTION</p><button class="production-pick" id="productionPicker"><span id="productionName">Loading studio…</span><b>⌄</b></button><div class="production-menu" id="productionMenu"></div></div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <p class="nav-group">STUDIO OVERVIEW</p>
+        <button class="nav-link active" data-view="dashboard"><span>▦</span>Control room</button>
+        <button class="nav-link" data-view="scenes"><span>▤</span>Scene schedule</button>
+        <button class="nav-link" data-view="inventory"><span>◇</span>Asset inventory <b id="navAlert"></b></button>
+        <p class="nav-group">CONTINUITY OPERATIONS</p>
+        <button class="nav-link" data-view="assignments"><span>⊞</span>Placement matrix</button>
+        <button class="nav-link" data-view="logs"><span>◷</span>Script log</button>
+        <button class="nav-link" data-view="characters"><span>◎</span>Cast registry</button>
+        <p class="nav-group">SYSTEM</p>
+        <button class="nav-link" data-view="schema"><span>⌗</span>Data architecture</button>
+      </nav>
+      <div class="system-status"><div class="sync-glyph"><i></i><i></i><i></i></div><div><b id="dataMode">SYNCING RECORDS</b><small id="dataModeDetail">Validating data layer</small></div></div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar"><button class="menu-button" id="mobileMenu" aria-label="Open navigation">☰</button><div class="crumb"><span>STUDIO OPERATIONS</span><i>›</i><b id="crumb">CONTROL ROOM</b></div><div class="topbar-tools"><span class="console-mode">OPERATOR <b>01</b></span><div class="live-clock"><i></i><span id="liveClock">--:--:-- IST</span></div><button class="ghost-icon" id="refreshButton" title="Refresh workspace">↻</button><button class="primary-button" id="newButton"><span>＋</span><b>NEW</b></button></div></header>
+
+      <section class="view active" id="dashboard-view">
+        <div class="console-heading"><div><p class="kicker">CONTINUITY / OPERATIONS DESK</p><h1>Production<br><em>in focus.</em></h1><p>One composed view of the scenes ahead, the objects on hand, and the decisions that must hold from take to take.</p><div class="heading-actions"><button class="primary-button" data-new="log"><span>＋</span><b>LOG DECISION</b></button><button class="secondary-button" data-go="inventory">OPEN INVENTORY <b>→</b></button></div></div><section class="shoot-docket"><div class="docket-top"><span>SHOOT DOCKET</span><b>LIVE</b></div><div><strong>REEL <em>F</em></strong><p>MAHISHMATI · FINAL BATTLE</p></div><div class="docket-rule"></div><small>CONTINUITY DESK<br>SESSION ACTIVE</small></section></div>
+        <div class="metrics-grid" id="metricsGrid"></div>
+        <div class="console-grid"><section class="console-panel schedule-panel"><div class="panel-heading"><div><p class="micro-label">SCENE OPERATIONS</p><h2>Readiness register</h2></div><button class="text-action" data-go="scenes">OPEN SCHEDULE <span>→</span></button></div><div class="column-labels"><span>SCENE</span><span>SETUP</span><span>READINESS</span><span>EXCEPTION</span></div><div class="readiness-list" id="readinessList"></div></section><aside class="operator-rail"><section class="focus-card"><div class="focus-head"><p class="micro-label">CURRENT FOCUS</p><span>ON DECK</span></div><div id="focusDetails"></div><button class="full-button" data-go="assignments">Review placement plan <b>→</b></button></section><section class="alert-panel"><div class="panel-heading"><div><p class="micro-label alert-label">EXCEPTION QUEUE</p><h2>Needs review</h2></div><span class="alert-counter" id="alertCounter">0</span></div><div class="alert-list" id="alertList"></div></section></aside></div>
+        <section class="console-panel field-panel"><div class="panel-heading"><div><p class="micro-label">SCRIPT SUPERVISOR DESK</p><h2>Recent field decisions</h2></div><button class="text-action" data-go="logs">VIEW COMPLETE LOG <span>→</span></button></div><div class="activity-list" id="recentLogs"></div></section>
+      </section>
+
+      <section class="view" id="scenes-view"><div class="page-header"><div><p class="kicker">SCHEDULE / SCENE OPERATIONS</p><h1>Scene schedule</h1><p>Every setup, required prop count, and current continuity confidence in one studio-ready register.</p></div><button class="primary-button" data-new="scene"><span>＋</span><b>ADD SCENE</b></button></div><div class="toolbar"><div class="segmented" id="sceneTabs"><button class="selected" data-filter="all">ALL <b id="sceneTotal">0</b></button><button data-filter="ready">READY</button><button data-filter="risk">AT RISK</button></div><label class="search-field"><span>⌕</span><input id="sceneSearch" placeholder="Find scene or setting"></label></div><section class="scene-board" id="sceneTable"></section></section>
+
+      <section class="view" id="inventory-view"><div class="page-header"><div><p class="kicker">ASSET CONTROL / DIGITAL PROP CLOSET</p><h1>Asset inventory</h1><p>A complete state register for every object—where it is, what condition it is in, and how it serves the story.</p></div><button class="primary-button" data-new="prop"><span>＋</span><b>REGISTER ASSET</b></button></div><div class="inventory-summary"><div><span>CATALOG</span><strong id="inventoryTotal">00</strong><small>TRACKED ASSETS</small></div><div><span>READY</span><strong id="availableTotal">00</strong><small>AVAILABLE TO PLACE</small></div><div><span>EXCEPTIONS</span><strong id="exceptionTotal">00</strong><small>NEEDS ACTION</small></div><button data-new="prop">＋ ADD NEW ASSET</button></div><div class="toolbar"><div class="segmented" id="propTabs"><button class="selected" data-prop-filter="All">ALL ASSETS</button><button data-prop-filter="Available">AVAILABLE</button><button data-prop-filter="In Use">IN USE</button><button data-prop-filter="Missing">MISSING</button><button data-prop-filter="Broken">BROKEN</button></div><label class="search-field"><span>⌕</span><input id="propSearch" placeholder="Search by name, category, location"></label></div><div class="inventory-grid" id="propGrid"></div></section>
+
+      <section class="view" id="assignments-view"><div class="page-header"><div><p class="kicker">SCENE / ASSET RELATIONSHIP MATRIX</p><h1>Placement matrix</h1><p>Set the physical starting image for every object, actor interaction, and critical action beat.</p></div><button class="primary-button" data-new="assignment"><span>＋</span><b>PLACE ASSET</b></button></div><div class="matrix-shell"><aside class="scene-rail"><div class="rail-label">SCENE INDEX <b id="railCount">0</b></div><div id="sceneRail"></div></aside><section class="matrix-content"><div class="matrix-head" id="assignmentTitle"></div><div class="matrix-list" id="assignmentCards"></div></section></div></section>
+
+      <section class="view" id="logs-view"><div class="page-header"><div><p class="kicker">CONTINUITY / DECISION HISTORY</p><h1>Script log</h1><p>Trace visual mismatches, approved resets, and the notes needed to preserve the next setup.</p></div><button class="primary-button" data-new="log"><span>＋</span><b>LOG ISSUE</b></button></div><div class="log-layout"><section class="console-panel logs-panel"><div class="log-filter-strip" id="logFilters"></div><div id="logList"></div></section><aside class="protocol-card"><p class="micro-label">DESK PROTOCOL</p><h3>Make the reset unmistakable.</h3><p>Log what changed, what was corrected, and what must be verified before the next take.</p><div class="protocol-rule"></div><span>NOTE FORMAT</span><code>OBSERVE → CORRECT → VERIFY</code></aside></div></section>
+
+      <section class="view" id="characters-view"><div class="page-header"><div><p class="kicker">PERFORMER / CHARACTER CONTEXT</p><h1>Cast registry</h1><p>Maintain the people and character details that bring critical hand-prop moments into focus.</p></div><button class="primary-button" data-new="character"><span>＋</span><b>ADD CHARACTER</b></button></div><div class="character-grid" id="characterGrid"></div></section>
+
+      <section class="view" id="schema-view"><div class="page-header"><div><p class="kicker">DATA SYSTEM / RELATIONAL BLUEPRINT</p><h1>Data architecture</h1><p>The normalized MySQL foundation safeguarding every continuity decision and asset relationship.</p></div><a class="secondary-button" href="/database/schema.sql" target="_blank">OPEN SCHEMA.SQL ↗</a></div><section class="architecture-hero"><div><span>MYSQL 8.0 · INNODB · 3NF</span><h2>Production truth is only useful when every record remains connected.</h2></div><div class="architecture-flow"><b>PRODUCTIONS</b><i></i><b>SCENES</b><i></i><strong>ASSIGNMENTS</strong><i></i><b>PROPS</b></div></section><div class="entity-grid" id="entityGrid"></div><section class="system-note"><span>⌁</span><div><p class="micro-label">SYSTEM NOTE</p><h3>Referential integrity, protected by design.</h3><p>Foreign keys safeguard relationships while current-status views deliver a concise operational reading.</p></div></section></section>
+    </main>
+  </div>
+  <div class="modal-backdrop" id="modalBackdrop"><section class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modalClose" aria-label="Close">×</button><p class="kicker" id="modalEyebrow">NEW RECORD</p><h2 id="modalTitle">Create record</h2><form id="recordForm"></form></section></div>
+  <div class="confirm-backdrop" id="confirmBackdrop"><section class="confirm-card"><div class="confirm-icon">!</div><p class="kicker alert-label">PERMANENT ACTION</p><h2 id="confirmTitle">Delete this record?</h2><p id="confirmText">This cannot be undone.</p><div><button class="secondary-button" id="confirmCancel">CANCEL</button><button class="danger-button" id="confirmDelete">DELETE RECORD</button></div></section></div>
+  <div class="toast-region" id="toastRegion"></div><script src="/app.js"></script>
+</body>
+</html>
